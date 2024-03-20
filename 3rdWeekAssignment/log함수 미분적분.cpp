@@ -5,7 +5,7 @@ double log_with_base_a(double x, double a)// 밑변환 공식을 이용하여 �
 	return log(x) / log(a);
 }
 using namespace std;
-int main()
+void main()
 {
 
 	double a, b, c, dt, t, d_num, d_anal;
