@@ -1,0 +1,60 @@
+#include<iostream>
+#include <fstream>
+#include <cmath> // for pow()
+
+using namespace std;
+
+float factorial(int n) 
+{ 
+   if (n == 0 || n == 1)
+      return 1;
+   else
+      return n * factorial(n - 1); 
+}
+
+int main() 
+{
+   float p, * ex, * theory;
+   int n, k, N = 100000, count;  // N number of experiment
+   n = 20;  p = 1.0 / 2.0;
+   ex = new float[n + 1];
+   theory = new float[n + 1];
+
+   for (int i = 0; i <= n; ++i)   // 이론값 배열에 값 넣기
+   {
+      float probn = factorial(n) / factorial(i) / factorial(n - i) * pow(p, i) * pow((1 - p), n - i);
+      theory[i] = probn;
+   }
+
+   for (int i = 0; i <= n; ++i)   // 실험값 배열 초기화
+   {
+      ex[i] = 0;      
+   }
+
+   for (int k = 0; k < N; ++k)      // 동전 던진 후 각 경우의 수 구하기
+   {
+      count = 0;
+      for (int j = 0; j < n; ++j)
+      {
+         if ((rand() / (float)RAND_MAX) < p)
+            ++count;
+      }
+      ++ex[count];
+   } 
+
+   for (int i = 0; i <= n; ++i)   // 경우의 수를 확률로 전환
+   {
+      ex[i] /= (float)N;
+   }         
+
+   
+   ofstream xxx("binomial.txt");
+
+
+   for (int i = 0; i <= n; ++i) 
+   {
+      xxx << i << " " << theory[i] << " " << ex[i] << endl;
+   }
+   xxx.close();
+   return 1;
+}
