@@ -1,0 +1,170 @@
+#include <iostream>
+#include <fstream>
+#include <cmath>
+using namespace std;
+float pi = 3.141592;
+
+int  getFrequency(char gaemyung)
+{
+    int frequency = 0;
+
+    if (gaemyung == 'C')
+    {
+        frequency = 261;
+    }
+    else if (gaemyung == 'D')
+    {
+        frequency = 294;
+    }
+    else if (gaemyung == 'E')
+    {
+        frequency = 330;
+    }
+    else if (gaemyung == 'F')
+    {
+        frequency = 349;
+    }
+    else if (gaemyung == 'G')
+    {
+        frequency = 392;
+    }
+    else if (gaemyung == 'A')
+    {
+        frequency = 440;
+    }
+    else
+    {
+        frequency = 494;
+    }
+
+    return frequency;
+
+
+}
+
+int getAmplititude(int jinpok)
+{
+
+
+    jinpok *= 1000;
+    return jinpok;
+
+}
+
+
+float getLength(int eumpyo) {
+    float T = 0;
+    if (eumpyo == 2) T = 2.0;  // 2분음표 2초 
+    else if (eumpyo == 4) T = 1.0; // 4분음표는 1초
+    else if (eumpyo == 8) T = 0.5; // 8분음표는 0.5초
+    else if (eumpyo == 16) T = 0.25; // 16분음표는 0.25초
+    return T;
+}
+
+
+
+
+
+int main() {
+    ofstream xx("작은별.txt");
+    if (!xx) {
+        cout << "can`t open file" << endl;
+        return -1;
+    }
+    int n_note = 0;
+    int i = 0;
+    int nn = 0, ss = 0;
+    string k = "0";
+    cout << "how many note?" << endl;
+    cin >> n_note;
+    for (i = 0; i < n_note; i++) {
+        cout << "note" << " " << "key" << " " << "size" << endl;
+        cin >> nn >> k >> ss;
+        xx << nn << " " << k << " " << ss << endl;
+    }
+    xx.close();
+
+    // 변수 선언
+    int f = 0;
+    int a = 0;
+    float T = 0.0f;
+
+    ifstream Inputfile("Beatles-LetItBe-wav_30s.wav", ios::binary || ios::in);
+
+    if (!Inputfile)
+        return 444; // 파일이 없다면 444 int값 리턴 
+
+    char header[100];
+    Inputfile.read(header, 44);
+    Inputfile.close();
+
+    // extracting header from beatles wav file
+    int* sampleRate = (int*)(header + 24);
+
+    short* n;
+    n = (short*)(header + 22); // NumChannel 
+
+    int* fs;
+    fs = (int*)(header + 24); // sample rate
+
+    int* b;
+    b = (int*)(header + 28); // byteRate
+
+
+    int N = fs[0]; // sampling for 10sec
+
+    short* data;
+    data = new short[N]; // allocating memory for 10 seconds
+
+    *n = 1; // changing streo to mono
+
+    *b = n[0] * fs[0] * sizeof(short); // byte rate change 
+
+    Inputfile.read((char*)data, N * sizeof(short));
+
+
+
+    ofstream my_file("my.wav", ios::binary | ios::out);
+
+    if (!my_file) return 555; // 파일이 안열리면 555 리턴후 종료
+
+    my_file.write(header, 44 * sizeof(char)); // 44바이트 헤더 쓰기 
+
+
+    {
+
+        // 악보 텍스트 읽고 값 정하기 
+
+        
+        int note = 0;   //음표 박자
+        char tonic_solfa; // 음
+        int volume = 0;  // 소리
+        float dt = 1.0 / fs[0];
+        ifstream xx("작은별.txt");
+     
+
+        for (int i = 0; i < n_note; i++)
+        {
+            
+            xx >> note >> tonic_solfa >> volume;
+            f = getFrequency(tonic_solfa);
+            a = getAmplititude(volume);
+            T = getLength(note);
+            float t = 0;
+
+            for (int j = 0; j < fs[0]; j++, t += dt)
+            {
+                data[j] = (short)(a * sin(2.0 * pi * f * t));
+            }
+            my_file.write((char*)data, N * sizeof(short));
+        }
+
+
+    }
+
+
+    my_file.close();
+
+    return 0;
+
+}
