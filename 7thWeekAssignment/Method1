@@ -1,1 +1,39 @@
+#include<iostream>
+#include<fstream>
+using namespace std;
 
+int f1(int i) {
+   return i * 5;
+}
+float f2(float j) {
+   return j * j;
+}
+
+int main() {
+   int a = 1234,i;
+   int array1[5];
+   float array2[3] = { -0.5,0,0.5 };
+
+   for (i = 0; i < 5; i++) {
+      cout << "array1[" << i << "]" << "is? (1000<=input<=5000)" << endl;
+      cin >> array1[i];
+   }
+
+   ofstream mybin;
+   mybin.open("mybin.dat", ios::binary | ios::out);
+
+   mybin.write((char*)&a, 4);
+
+   for (i = 0; i < 5; i++) {
+      array1[i] = f1(array1[i]);
+   }
+   mybin.write((char*)array1, sizeof(int) * 5);
+   
+   for (i = 0; i < 3; i++) {
+      array2[i] = f2(array2[i]);
+   }
+   mybin.write((char*)array2, sizeof(float) * 3);
+
+   mybin.close();
+
+}
