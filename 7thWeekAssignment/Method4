@@ -2,9 +2,9 @@
 #include<fstream>
 using namespace std;
 
-void f1(int arr[], int n, int* result) {
+void f1(int arr[], int n, float* result) {
    for (int i = 0; i < n; i++) {
-      result[i + 1] = arr[i] * 5;
+      result[i + 1] = float(arr[i] * 5);
    }
 }
 
@@ -15,33 +15,27 @@ void f2(float arr[], int n, float* result) {
 }
 
 void All() {
-   int a = 1234, i, n1, n2;
-   cout << "n1?" << endl;
-   cin >> n1;
-   cout << "n2?" << endl;
-   cin >> n2;
+   int a = 1234, i, n1=5, n2=3;
    int* array1 = new int[n1];
-   float* array2 = new float[n2];
-   int* answer;
-   answer = new int[11];
+   
+   float array2[3] = { -0.5, 0, 0.5 };
+   float* answer;
+   answer = new float[11];
 
    for (i = 0; i < n1; i++) {
       cout << "array1[" << i << "]" << "is? (1000<=input<=5000)" << endl;
       cin >> array1[i];
    }
-   for (i = 0; i < n2; i++) {
-      cout << "array2[" << i << "]" << "is?" << endl;
-      cin >> array2[i];
-   }
-
-   answer[0] = a;
+   
+   answer[0] = float(a);
    f1(array1, n1, answer);
-   f2(array2, n2, (float*)answer);
+   f2(array2, n2, answer);
 
    ofstream mybin;
    mybin.open("mybin.dat", ios::binary | ios::out);
    mybin.write((char*)answer, sizeof(int) * (1 + n1 + n2));
    mybin.close();
+   
    
    delete answer;
 
